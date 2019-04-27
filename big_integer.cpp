@@ -27,7 +27,7 @@ big_integer::big_integer(big_integer const &other) : data(other.data), negative(
 
 uint32_t cast_to_unsigned(int32_t a) {
     auto b = (int64_t) a;
-    return (uint32_t) (b < 0 ? (-b) : b);
+    return (uint32_t) (b < 0 ? -b : b);
 }
 
 // big_integer a = (int) b
@@ -40,8 +40,8 @@ big_integer::big_integer(uint32_t a) : data(1), negative(false) {
     data[0] = a;
 }
 
-// big_integer a = (std::string) b
-big_integer::big_integer(std::string const &str) : data(1) {
+// big_integer a = (std::string) b, initialize negative is strictly needed
+big_integer::big_integer(std::string const &str) : data(1), negative(false) {
     for (size_t i = (str[0] == '-' ? 1 : 0); i < str.length(); ++i) {
         *this += str[i] - '0';
         *this *= 10;
@@ -52,10 +52,7 @@ big_integer::big_integer(std::string const &str) : data(1) {
 }
 
 // big_integer destructor
-big_integer::~big_integer() {
-    data.clear();
-    negative = false;
-}
+big_integer::~big_integer() = default;
 
 big_integer &big_integer::operator=(big_integer const &other) {
     data = other.data;
@@ -154,10 +151,8 @@ big_integer operator+(big_integer a, big_integer const &b) {
             return -(-a + -b);
         else
             return b - -a;
-    } else {
-        if (b.negative)
-            return a - -b;
-    }
+    } else if (b.negative)
+        return a - -b;
 
     uint32_t carry = 0;
     size_t res_len = std::max(a.data.size(), b.data.size()) + 1;
@@ -178,10 +173,8 @@ big_integer operator-(big_integer a, big_integer const &b) {
             return -(-a - -b);
         else
             return -(-a + b);
-    } else {
-        if (b.negative)
-            return a + b;
-    }
+    } else if (b.negative)
+        return a + b;
 
     if (a < b)
         return -(b - a);
@@ -223,7 +216,7 @@ big_integer operator/(big_integer a, int32_t b) {
 
 big_integer operator/(big_integer a, uint32_t b) {
     uint32_t carry = 0;
-    for (ptrdiff_t i = a.data.size() - 1; i >= 0; --i) {
+    for (size_t i = a.data.size() - 1; i != (size_t) (-1); --i) {
         uint64_t sum = ((uint64_t) carry << LOG2_BASE) + a.data[i];
         a.data[i] = (uint32_t) (sum / b);
         carry = sum % b;
@@ -245,17 +238,16 @@ big_integer operator/(big_integer a, big_integer const &b) {
         return a / b.data[0];
 
     auto factor = (uint32_t) ((1ull << LOG2_BASE) / ((uint64_t) (b.data.back() + 1)));
-    big_integer r = a * factor, d = b * factor;
-    big_integer res;
+    big_integer r = a * factor, d = b * factor, res;
     res.negative = false;
     size_t n = d.data.size(), res_len = r.data.size() - n;
     res.data.resize(res_len);
-    if (r >= (d << LOG2_BASE * res_len)) {
+    if (r >= d << LOG2_BASE * res_len) {
         res.data.push_back(1);
         r -= d << LOG2_BASE * res_len;
     }
 
-    for (ptrdiff_t i = res_len - 1; i >= 0; --i) {
+    for (size_t i = res_len - 1; i != (size_t) (-1); --i) {
         size_t pos = n + i;
         r.data.resize(std::max(r.data.size(), pos + 1));
 
@@ -293,8 +285,7 @@ uint32_t big_integer::get_digit(size_t pos, bool bit) const {
 }
 
 big_integer bit_operation(big_integer a, big_integer const &b, uint32_t (bit_op)(uint32_t a, uint32_t b)) {
-    big_integer x = (a.negative ? bit_inverse(a) : a);
-    big_integer y = (b.negative ? bit_inverse(b) : b);
+    big_integer x = (a.negative ? bit_inverse(a) : a), y = (b.negative ? bit_inverse(b) : b);
 
     big_integer res;
     res.data.resize(std::max(x.data.size(), y.data.size()));
@@ -349,25 +340,10 @@ big_integer operator<<(big_integer a, int32_t b) {
 
     size_t div = (size_t) b / LOG2_BASE;
     a.data.resize(a.data.size() + div);
-    for (ptrdiff_t i = a.data.size() - 1; i >= 0; --i)
+    for (size_t i = a.data.size() - 1; i != (size_t) (-1); --i)
         a.data[i] = ((size_t) i >= div ? a.data[i - div] : 0);
 
     return a;
-}
-
-uint bit_count(uint32_t x) {
-    uint cnt = 0;
-    for (uint i = 0; i < 32; ++i)
-        cnt += x >> i & 1;
-    return cnt;
-}
-
-bool is_power_of_2(big_integer const &a) {
-    for (size_t i = 0; i < a.data.size() - 1; ++i) {
-        if (a.data[i] != 0)
-            return false;
-    }
-    return bit_count(a.data.back()) == 1;
 }
 
 big_integer operator>>(big_integer a, int32_t b) {
@@ -375,14 +351,14 @@ big_integer operator>>(big_integer a, int32_t b) {
         return a << -b;
 
     bool reminder_exists = false;
-    size_t shift = (size_t) b & 31u, div = (size_t) b / LOG2_BASE;
+    size_t shift = (size_t) b & (LOG2_BASE - 1), div = (size_t) b / LOG2_BASE;
     uint32_t carry = 0;
     for (size_t i = 0; i < a.data.size(); ++i) {
         reminder_exists = a.data[i] != 0 && div > 0;
         a.data[i] = a.data[i + div];
     }
     a.data.resize(a.data.size() - div);
-    for (ptrdiff_t i = a.data.size() - 1; i >= 0; --i) {
+    for (size_t i = a.data.size() - 1; i != (size_t) (-1); --i) {
         uint64_t shifted = (uint64_t) a.data[i] << (LOG2_BASE - shift);
         a.data[i] = (shifted >> LOG2_BASE) | carry;
         carry = (uint32_t) shifted;
@@ -409,7 +385,7 @@ bool operator<(big_integer const &a, big_integer const &b) {
     if (a.data.size() != b.data.size())
         return a.negative ^ (a.data.size() < b.data.size());
 
-    for (ptrdiff_t i = a.data.size() - 1; i >= 0; --i) {
+    for (size_t i = a.data.size() - 1; i != (size_t) (-1); --i) {
         if (a.data[i] != b.data[i])
             return (a.negative ^ (a.data[i] < b.data[i]));
     }

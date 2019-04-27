@@ -66,6 +66,11 @@ struct big_integer
     uint32_t get_digit(size_t pos, bool bit) const;
     friend void refresh(big_integer &a);
 
+/*
+    size_t digits_qty() const;
+    unsigned int get_digit(size_t pos) const;
+     */
+
 private:
     // digit from 0 to 2^32 - 1
     std::vector<uint32_t> data;
