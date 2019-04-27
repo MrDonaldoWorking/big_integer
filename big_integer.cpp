@@ -17,10 +17,6 @@ void refresh(big_integer &a) {
         a.negative = false;
 }
 
-/*size_t big_integer::digits_qty() const {
-    return data.size();
-}*/
-
 // Setting ZERO
 big_integer::big_integer() : data(1), negative(false) {}
 
@@ -248,7 +244,7 @@ big_integer operator/(big_integer a, big_integer const &b) {
     if (b.data.size() == 1)
         return a / b.data[0];
 
-    auto factor = (uint32_t)((1ull << LOG2_BASE) / ((uint64_t)(b.data.back() + 1)));
+    auto factor = (uint32_t) ((1ull << LOG2_BASE) / ((uint64_t) (b.data.back() + 1)));
     big_integer r = a * factor, d = b * factor;
     big_integer res;
     res.negative = false;
@@ -285,7 +281,7 @@ big_integer operator%(big_integer a, big_integer const &b) {
 
 big_integer bit_inverse(big_integer a) {
     ++a;
-    for (uint32_t & i : a.data)
+    for (uint32_t &i : a.data)
         i = ~i;
 
     return a;
@@ -296,7 +292,7 @@ uint32_t big_integer::get_digit(size_t pos, bool bit) const {
     return (pos >= data.size() ? out_of_range : data[pos]);
 }
 
-big_integer bit_operation(big_integer a, big_integer const& b, uint32_t (bit_op)(uint32_t a, uint32_t b)) {
+big_integer bit_operation(big_integer a, big_integer const &b, uint32_t (bit_op)(uint32_t a, uint32_t b)) {
     big_integer x = (a.negative ? bit_inverse(a) : a);
     big_integer y = (b.negative ? bit_inverse(b) : b);
 
@@ -343,7 +339,7 @@ big_integer operator<<(big_integer a, int32_t b) {
 
     size_t shift = (size_t) b & (LOG2_BASE - 1);
     uint32_t carry = 0;
-    for (uint32_t & i : a.data) {
+    for (uint32_t &i : a.data) {
         uint64_t shifted = ((uint64_t) i << shift) | carry;
         i = (uint32_t) shifted;
         carry = shifted >> LOG2_BASE;
@@ -359,14 +355,32 @@ big_integer operator<<(big_integer a, int32_t b) {
     return a;
 }
 
+uint bit_count(uint32_t x) {
+    uint cnt = 0;
+    for (uint i = 0; i < 32; ++i)
+        cnt += x >> i & 1;
+    return cnt;
+}
+
+bool is_power_of_2(big_integer const &a) {
+    for (size_t i = 0; i < a.data.size() - 1; ++i) {
+        if (a.data[i] != 0)
+            return false;
+    }
+    return bit_count(a.data.back()) == 1;
+}
+
 big_integer operator>>(big_integer a, int32_t b) {
     if (b < 0)
         return a << -b;
 
+    bool reminder_exists = false;
     size_t shift = (size_t) b & 31u, div = (size_t) b / LOG2_BASE;
     uint32_t carry = 0;
-    for (size_t i = 0; i < a.data.size(); ++i)
+    for (size_t i = 0; i < a.data.size(); ++i) {
+        reminder_exists = a.data[i] != 0 && div > 0;
         a.data[i] = a.data[i + div];
+    }
     a.data.resize(a.data.size() - div);
     for (ptrdiff_t i = a.data.size() - 1; i >= 0; --i) {
         uint64_t shifted = (uint64_t) a.data[i] << (LOG2_BASE - shift);
@@ -374,7 +388,7 @@ big_integer operator>>(big_integer a, int32_t b) {
         carry = (uint32_t) shifted;
     }
 
-    if (a.negative)
+    if (a.negative && (reminder_exists || carry != 0))
         --a;
 
     refresh(a);
