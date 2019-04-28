@@ -44,7 +44,9 @@ big_integer::big_integer(uint32_t a) : data(1), negative(false) {
 
 // big_integer a = (std::string) b, initialize negative is strictly needed
 big_integer::big_integer(std::string const &str) : data(1), negative(false) {
+    assert (!str.empty());
     for (size_t i = (str[0] == '-' ? 1 : 0); i < str.length(); ++i) {
+        assert ('0' <= str[i] && str[i] <= '9');
         *this += str[i] - '0';
         *this *= 10;
     }
@@ -296,16 +298,16 @@ uint32_t big_integer::get_digit(size_t pos, bool bit) const {
     return (pos >= data.size() ? out_of_range : data[pos]);
 }
 
-big_integer bit_operation(big_integer a, big_integer const &b, func bit_op) {
+big_integer bit_operation(big_integer a, big_integer const &b, const std::function<uint32_t(uint32_t, uint32_t)> &bit_op) {
     big_integer x = (a.negative ? bit_inverse(a) : a);
     big_integer y = (b.negative ? bit_inverse(b) : b);
 
     big_integer res;
     res.data.resize(std::max(x.data.size(), y.data.size()));
     for (size_t i = 0; i < res.data.size(); ++i) {
-        res.data[i] = (*bit_op)(x.get_digit(i, true), y.get_digit(i, true));
+        res.data[i] = (bit_op)(x.get_digit(i, true), y.get_digit(i, true));
     }
-    res.negative = (*bit_op)(x.negative, y.negative);
+    res.negative = (bit_op)(x.negative, y.negative);
     if (res.negative) {
         res = bit_inverse(--res);
         --res;

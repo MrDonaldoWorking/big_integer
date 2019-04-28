@@ -5,6 +5,7 @@
 #include <iosfwd>
 #include <vector>
 #include <cstdint>
+#include <functional>
 
 typedef std::binary_function<uint32_t, uint32_t, uint32_t> (*func)(uint32_t, uint32_t);
 
@@ -49,7 +50,7 @@ struct big_integer {
     friend big_integer operator/(big_integer a, big_integer const& b);
     friend big_integer operator%(big_integer a, big_integer const& b);
 
-    friend big_integer bit_operation(big_integer a, big_integer const& b, std::binary_function<uint32_t, uint32_t, uint32_t> (*bit_op)(uint32_t a, uint32_t b));
+    friend big_integer bit_operation(big_integer a, big_integer const& b, const std::function<uint32_t(uint32_t, uint32_t)> &bit_op);
 
     friend big_integer operator<<(big_integer a, int b);
     friend big_integer operator>>(big_integer a, int b);
