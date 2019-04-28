@@ -7,8 +7,6 @@
 #include <cstdint>
 #include <functional>
 
-typedef std::binary_function<uint32_t, uint32_t, uint32_t> (*func)(uint32_t, uint32_t);
-
 struct big_integer {
     big_integer();
     big_integer(big_integer const& other);

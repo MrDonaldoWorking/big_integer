@@ -1,9 +1,7 @@
 #include "big_integer.h"
 
 #include <cstring>
-#include <stdexcept>
 #include <algorithm>
-#include <stdio.h>
 #include <assert.h>
 
 const uint32_t LOG2_BASE = 32;
