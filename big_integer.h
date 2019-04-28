@@ -48,7 +48,7 @@ struct big_integer
     friend big_integer operator/(big_integer a, big_integer const& b);
     friend big_integer operator%(big_integer a, big_integer const& b);
 
-    friend big_integer bit_operation(big_integer a, big_integer const& b, uint32_t (bit_op)(uint32_t a, uint32_t b));
+    friend big_integer bit_operation(big_integer a, big_integer const& b, uint32_t (*bit_op)(uint32_t a, uint32_t b));
 
     friend big_integer operator<<(big_integer a, int b);
     friend big_integer operator>>(big_integer a, int b);
