@@ -317,15 +317,15 @@ big_integer bit_operation(big_integer a, big_integer const &b, const std::functi
 }
 
 big_integer operator&(big_integer a, big_integer const &b) {
-    return bit_operation(a, b, std::bit_and<uint32_t>());
+    return bit_operation(a, b, std::bit_and<uint32_t>{});
 }
 
 big_integer operator|(big_integer a, big_integer const &b) {
-    return bit_operation(a, b, std::bit_or<uint32_t>());
+    return bit_operation(a, b, std::bit_or<uint32_t>{});
 }
 
 big_integer operator^(big_integer a, big_integer const &b) {
-    return bit_operation(a, b, std::bit_xor<uint32_t>());
+    return bit_operation(a, b, std::bit_xor<uint32_t>{});
 }
 
 big_integer operator<<(big_integer a, int32_t b) {
