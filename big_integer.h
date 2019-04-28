@@ -6,8 +6,9 @@
 #include <vector>
 #include <cstdint>
 
-struct big_integer
-{
+typedef std::binary_function<uint32_t, uint32_t, uint32_t> (*func)(uint32_t, uint32_t);
+
+struct big_integer {
     big_integer();
     big_integer(big_integer const& other);
     big_integer(int32_t a);
@@ -48,7 +49,7 @@ struct big_integer
     friend big_integer operator/(big_integer a, big_integer const& b);
     friend big_integer operator%(big_integer a, big_integer const& b);
 
-    friend big_integer bit_operation(big_integer a, big_integer const& b, uint32_t (*bit_op)(uint32_t a, uint32_t b));
+    friend big_integer bit_operation(big_integer a, big_integer const& b, std::binary_function<uint32_t, uint32_t, uint32_t> (*bit_op)(uint32_t a, uint32_t b));
 
     friend big_integer operator<<(big_integer a, int b);
     friend big_integer operator>>(big_integer a, int b);

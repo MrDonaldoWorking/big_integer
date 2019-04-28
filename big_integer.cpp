@@ -296,8 +296,7 @@ uint32_t big_integer::get_digit(size_t pos, bool bit) const {
     return (pos >= data.size() ? out_of_range : data[pos]);
 }
 
-big_integer bit_operation(big_integer a, big_integer const &b,
-        uint32_t (*bit_op)(uint32_t a, uint32_t b)) {
+big_integer bit_operation(big_integer a, big_integer const &b, func bit_op) {
     big_integer x = (a.negative ? bit_inverse(a) : a);
     big_integer y = (b.negative ? bit_inverse(b) : b);
 
