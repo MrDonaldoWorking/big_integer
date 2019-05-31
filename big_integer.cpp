@@ -36,6 +36,7 @@ big_integer::big_integer(int32_t a) : data(1), negative(a < 0) {
     refresh(*this);
 }
 
+// used in divide
 big_integer::big_integer(uint32_t a) : data(1), negative(false) {
     data[0] = a;
 }
@@ -284,8 +285,8 @@ big_integer operator%(big_integer a, big_integer const &b) {
 
 big_integer bit_inverse(big_integer a) {
     ++a;
-    for (uint32_t &i : a.data) {
-        i = ~i;
+    for (size_t i = 0; i < a.data.size(); ++i) {
+        a.data[i] = ~a.data[i];
     }
 
     return a;
@@ -333,9 +334,9 @@ big_integer operator<<(big_integer a, int32_t b) {
 
     size_t shift = (size_t) b & (LOG2_BASE - 1);
     uint32_t carry = 0;
-    for (uint32_t &i : a.data) {
-        uint64_t shifted = ((uint64_t) i << shift) | carry;
-        i = (uint32_t) shifted;
+    for (size_t i = 0; i < a.data.size(); ++i) {
+        uint64_t shifted = ((uint64_t) a.data[i] << shift) | carry;
+        a.data[i] = (uint32_t) shifted;
         carry = shifted >> LOG2_BASE;
     }
     if (carry > 0) {

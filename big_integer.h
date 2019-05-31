@@ -1,6 +1,8 @@
 #ifndef BIG_INTEGER_H
 #define BIG_INTEGER_H
 
+#include "opt_vector.h"
+
 #include <cstddef>
 #include <iosfwd>
 #include <vector>
@@ -73,7 +75,7 @@ struct big_integer {
 
 private:
     // digit from 0 to 2^32 - 1
-    std::vector<uint32_t> data;
+    opt_vector<uint32_t> data;
     bool negative;
 };
 
