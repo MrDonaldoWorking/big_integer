@@ -25,141 +25,29 @@
 template <typename T>
 struct opt_vector {
 public:
-    opt_vector(): len(0), small_data(static_cast<T>(0)) {}
+    opt_vector();
+    explicit opt_vector(size_t new_len);
+    opt_vector(size_t new_len, T new_val);
+    ~opt_vector();
 
-    explicit opt_vector(size_t new_len): len(new_len), small_data(0) {
-        if (len > 1) {
-            big_data = std::make_shared<std::vector<T>>(new_len);
-        }
-    }
+    size_t size() const;
+    T operator[](size_t pos) const;
+    T &operator[](size_t pos);
+    T back() const;
 
-    opt_vector(size_t new_len, T new_val): len(new_len) {
-        if (len > 1) {
-            big_data = std::make_shared<std::vector<T>>(new_len, new_val);
-        } else if (len == 1) {
-            small_data = new_val;
-        }
-    }
+    void resize(size_t new_len);
+    void push_back(T new_val);
+    void pop_back();
 
-    ~opt_vector() {
-        if (!is_small()) {
-            big_data.reset();
-        }
-    }
-
-    size_t size() const {
-        return len;
-    }
-
-    T operator[](size_t pos) const {
-        assert (pos < len);
-
-        if (is_small()) {
-            return small_data;
-        }
-        return big_data->operator[](pos);
-    }
-
-    T &operator[](size_t pos) {
-        assert (pos < len);
-
-        if (is_small()) {
-            return small_data;
-        }
-        make_unique();
-        return big_data->operator[](pos);
-    }
-
-
-    T back() const {
-        assert (len > 0);
-
-        if (is_small()) {
-            return small_data;
-        }
-        return big_data->back();
-    }
-
-    void resize(size_t new_len) {
-        if (is_small()) {
-            if (new_len > 1) {
-                big_data = std::make_shared<std::vector<T>>(new_len);
-                big_data->at(0) = small_data;
-            }
-        } else {
-            if (new_len > 1) {
-                make_unique();
-                big_data->resize(new_len);
-            } else {
-                if (new_len == 1) {
-                    small_data = *big_data->begin();
-                }
-                big_data.reset();
-            }
-        }
-
-        len = new_len;
-    }
-
-    void push_back(T new_val) {
-        switch (len++) {
-            case 0:
-                small_data = new_val;
-                break;
-            case 1:
-                big_data = std::make_shared<std::vector<T>>(2);
-                big_data->at(0) = small_data;
-                big_data->at(1) = new_val;
-                break;
-            default:
-                make_unique();
-                big_data->push_back(new_val);
-                break;
-        }
-    }
-
-    void pop_back() {
-        assert (len > 1);
-
-        switch (len--) {
-            case 1:
-                small_data = 0;
-                break;
-            case 2:
-                small_data = *big_data->begin();
-                big_data.reset();
-                break;
-            default:
-                make_unique();
-                big_data->pop_back();
-                break;
-        }
-    }
-
-    bool operator==(opt_vector const& other) const {
-        if (this->len != other.len) {
-            return false;
-        }
-        if (this->is_small()) {
-            return this->small_data == other.small_data;
-        }
-        return *this->big_data == *other.big_data;
-    }
+    bool operator==(opt_vector const& other) const;
 
 private:
     size_t len;
     T small_data;
     std::shared_ptr<std::vector<T>> big_data;
 
-    inline bool is_small() const {
-        return len <= 1;
-    }
-
-    void make_unique() {
-        if (!big_data.unique()) {
-            big_data = std::make_shared<std::vector<T>>(*big_data);
-        }
-    }
+    inline bool is_small() const;
+    void make_unique();
 };
 
 #endif //BIGINT_OPT_VECTOR_H

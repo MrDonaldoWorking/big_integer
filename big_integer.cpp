@@ -3,6 +3,7 @@
 #include <cstring>
 #include <algorithm>
 #include <assert.h>
+#include <functional>
 
 const uint32_t LOG2_BASE = 32;
 
@@ -21,19 +22,15 @@ void refresh(big_integer &a) {
 big_integer::big_integer() : data(1), negative(false) {}
 
 // big_integer a = (big_integer) b
-big_integer::big_integer(big_integer const &other) : data(other.data), negative(other.negative) {
-    refresh(*this);
-}
+big_integer::big_integer(big_integer const &other) : data(other.data), negative(other.negative) {}
 
-uint32_t cast_to_unsigned(int32_t a) {
-    auto b = (int64_t) a;
-    return (uint32_t) (b < 0 ? -b : b);
+inline uint32_t cast_to_unsigned(int32_t a) {
+    return (a == INT32_MIN) ? (uint32_t) a : abs(a);
 }
 
 // big_integer a = (int) b
 big_integer::big_integer(int32_t a) : data(1), negative(a < 0) {
     data[0] = cast_to_unsigned(a);
-    refresh(*this);
 }
 
 // used in divide
@@ -44,12 +41,12 @@ big_integer::big_integer(uint32_t a) : data(1), negative(false) {
 // big_integer a = (std::string) b, initialize negative is strictly needed
 big_integer::big_integer(std::string const &str) : data(1), negative(false) {
     assert (!str.empty());
-    for (size_t i = (str[0] == '-' ? 1 : 0); i < str.length(); ++i) {
+    data[0] = 0;
+    for (size_t i = (str[0] == '-'); i < str.length(); ++i) {
         assert ('0' <= str[i] && str[i] <= '9');
-        *this += str[i] - '0';
         *this *= 10;
+        *this += str[i] - '0';
     }
-    *this /= 10;
     negative = (str[0] == '-');
     refresh(*this);
 }
@@ -60,7 +57,6 @@ big_integer::~big_integer() = default;
 big_integer &big_integer::operator=(big_integer const &other) {
     data = other.data;
     negative = other.negative;
-    refresh(*this);
     return *this;
 }
 
