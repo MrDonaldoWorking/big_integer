@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named big_int_lib
+
+# Build rule for target.
+big_int_lib: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 big_int_lib
+.PHONY : big_int_lib
+
+# fast build rule for target.
+big_int_lib/fast:
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/build
+.PHONY : big_int_lib/fast
+
+#=============================================================================
 # Target rules for targets named big_integer_testing
 
 # Build rule for target.
@@ -129,7 +142,7 @@ big_integer.o: big_integer.cpp.o
 
 # target to build an object file
 big_integer.cpp.o:
-	$(MAKE) -f CMakeFiles/big_integer_testing.dir/build.make CMakeFiles/big_integer_testing.dir/big_integer.cpp.o
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/big_integer.cpp.o
 .PHONY : big_integer.cpp.o
 
 big_integer.i: big_integer.cpp.i
@@ -138,7 +151,7 @@ big_integer.i: big_integer.cpp.i
 
 # target to preprocess a source file
 big_integer.cpp.i:
-	$(MAKE) -f CMakeFiles/big_integer_testing.dir/build.make CMakeFiles/big_integer_testing.dir/big_integer.cpp.i
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/big_integer.cpp.i
 .PHONY : big_integer.cpp.i
 
 big_integer.s: big_integer.cpp.s
@@ -147,7 +160,7 @@ big_integer.s: big_integer.cpp.s
 
 # target to generate assembly for a file
 big_integer.cpp.s:
-	$(MAKE) -f CMakeFiles/big_integer_testing.dir/build.make CMakeFiles/big_integer_testing.dir/big_integer.cpp.s
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/big_integer.cpp.s
 .PHONY : big_integer.cpp.s
 
 big_integer_testing.o: big_integer_testing.cpp.o
@@ -183,7 +196,7 @@ gtest/gtest-all.o: gtest/gtest-all.cc.o
 
 # target to build an object file
 gtest/gtest-all.cc.o:
-	$(MAKE) -f CMakeFiles/big_integer_testing.dir/build.make CMakeFiles/big_integer_testing.dir/gtest/gtest-all.cc.o
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/gtest/gtest-all.cc.o
 .PHONY : gtest/gtest-all.cc.o
 
 gtest/gtest-all.i: gtest/gtest-all.cc.i
@@ -192,7 +205,7 @@ gtest/gtest-all.i: gtest/gtest-all.cc.i
 
 # target to preprocess a source file
 gtest/gtest-all.cc.i:
-	$(MAKE) -f CMakeFiles/big_integer_testing.dir/build.make CMakeFiles/big_integer_testing.dir/gtest/gtest-all.cc.i
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/gtest/gtest-all.cc.i
 .PHONY : gtest/gtest-all.cc.i
 
 gtest/gtest-all.s: gtest/gtest-all.cc.s
@@ -201,7 +214,7 @@ gtest/gtest-all.s: gtest/gtest-all.cc.s
 
 # target to generate assembly for a file
 gtest/gtest-all.cc.s:
-	$(MAKE) -f CMakeFiles/big_integer_testing.dir/build.make CMakeFiles/big_integer_testing.dir/gtest/gtest-all.cc.s
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/gtest/gtest-all.cc.s
 .PHONY : gtest/gtest-all.cc.s
 
 gtest/gtest_main.o: gtest/gtest_main.cc.o
@@ -210,7 +223,7 @@ gtest/gtest_main.o: gtest/gtest_main.cc.o
 
 # target to build an object file
 gtest/gtest_main.cc.o:
-	$(MAKE) -f CMakeFiles/big_integer_testing.dir/build.make CMakeFiles/big_integer_testing.dir/gtest/gtest_main.cc.o
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/gtest/gtest_main.cc.o
 .PHONY : gtest/gtest_main.cc.o
 
 gtest/gtest_main.i: gtest/gtest_main.cc.i
@@ -219,7 +232,7 @@ gtest/gtest_main.i: gtest/gtest_main.cc.i
 
 # target to preprocess a source file
 gtest/gtest_main.cc.i:
-	$(MAKE) -f CMakeFiles/big_integer_testing.dir/build.make CMakeFiles/big_integer_testing.dir/gtest/gtest_main.cc.i
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/gtest/gtest_main.cc.i
 .PHONY : gtest/gtest_main.cc.i
 
 gtest/gtest_main.s: gtest/gtest_main.cc.s
@@ -228,7 +241,7 @@ gtest/gtest_main.s: gtest/gtest_main.cc.s
 
 # target to generate assembly for a file
 gtest/gtest_main.cc.s:
-	$(MAKE) -f CMakeFiles/big_integer_testing.dir/build.make CMakeFiles/big_integer_testing.dir/gtest/gtest_main.cc.s
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/gtest/gtest_main.cc.s
 .PHONY : gtest/gtest_main.cc.s
 
 opt_vector.o: opt_vector.cpp.o
@@ -237,7 +250,7 @@ opt_vector.o: opt_vector.cpp.o
 
 # target to build an object file
 opt_vector.cpp.o:
-	$(MAKE) -f CMakeFiles/big_integer_testing.dir/build.make CMakeFiles/big_integer_testing.dir/opt_vector.cpp.o
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/opt_vector.cpp.o
 .PHONY : opt_vector.cpp.o
 
 opt_vector.i: opt_vector.cpp.i
@@ -246,7 +259,7 @@ opt_vector.i: opt_vector.cpp.i
 
 # target to preprocess a source file
 opt_vector.cpp.i:
-	$(MAKE) -f CMakeFiles/big_integer_testing.dir/build.make CMakeFiles/big_integer_testing.dir/opt_vector.cpp.i
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/opt_vector.cpp.i
 .PHONY : opt_vector.cpp.i
 
 opt_vector.s: opt_vector.cpp.s
@@ -255,7 +268,7 @@ opt_vector.s: opt_vector.cpp.s
 
 # target to generate assembly for a file
 opt_vector.cpp.s:
-	$(MAKE) -f CMakeFiles/big_integer_testing.dir/build.make CMakeFiles/big_integer_testing.dir/opt_vector.cpp.s
+	$(MAKE) -f CMakeFiles/big_int_lib.dir/build.make CMakeFiles/big_int_lib.dir/opt_vector.cpp.s
 .PHONY : opt_vector.cpp.s
 
 # Help Target
@@ -265,8 +278,9 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... big_integer_testing"
 	@echo "... edit_cache"
+	@echo "... big_int_lib"
+	@echo "... big_integer_testing"
 	@echo "... big_integer.o"
 	@echo "... big_integer.i"
 	@echo "... big_integer.s"

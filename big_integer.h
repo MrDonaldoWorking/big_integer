@@ -1,12 +1,13 @@
 #ifndef BIG_INTEGER_H
 #define BIG_INTEGER_H
 
-#include "opt_vector.cpp"
+#include "opt_vector.h"
 
 #include <cstddef>
 #include <iosfwd>
 #include <vector>
 #include <cstdint>
+#include <functional>
 
 struct big_integer {
     big_integer();

@@ -3,7 +3,6 @@
 #include <cstring>
 #include <algorithm>
 #include <assert.h>
-#include <functional>
 
 const uint32_t LOG2_BASE = 32;
 

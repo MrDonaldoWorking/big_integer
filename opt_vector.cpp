@@ -1,38 +1,38 @@
 #include "opt_vector.h"
 
-template <typename T>
-opt_vector<T>::opt_vector() : len(0), small_data(static_cast<T>(0)) {}
+template <>
+opt_vector<uint32_t>::opt_vector() : len(0), small_data(static_cast<uint32_t>(0)) {}
 
-template <typename T>
-opt_vector<T>::opt_vector(size_t new_len) : len(new_len), small_data(0) {
+template <>
+opt_vector<uint32_t>::opt_vector(size_t new_len) : len(new_len), small_data(0) {
     if (len > 1) {
-        big_data = std::make_shared<std::vector<T>>(new_len);
+        big_data = std::make_shared<std::vector<uint32_t>>(new_len);
     }
 }
 
-template <typename T>
-opt_vector<T>::opt_vector(size_t new_len, T new_val) : len(new_len) {
+template <>
+opt_vector<uint32_t>::opt_vector(size_t new_len, uint32_t new_val) : len(new_len) {
     if (len > 1) {
-        big_data = std::make_shared<std::vector<T>>(new_len, new_val);
+        big_data = std::make_shared<std::vector<uint32_t>>(new_len, new_val);
     } else if (len == 1) {
         small_data = new_val;
     }
 }
 
-template <typename T>
-opt_vector<T>::~opt_vector() {
+template <>
+opt_vector<uint32_t>::~opt_vector() {
     if (!is_small()) {
         big_data.reset();
     }
 }
 
-template <typename T>
-size_t opt_vector<T>::size() const {
+template <>
+size_t opt_vector<uint32_t>::size() const {
     return len;
 }
 
-template <typename T>
-T opt_vector<T>::operator[](size_t pos) const {
+template <>
+uint32_t opt_vector<uint32_t>::operator[](size_t pos) const {
     assert (pos < len);
 
     if (is_small()) {
@@ -41,8 +41,8 @@ T opt_vector<T>::operator[](size_t pos) const {
     return big_data->operator[](pos);
 }
 
-template <typename T>
-T &opt_vector<T>::operator[](size_t pos) {
+template <>
+uint32_t &opt_vector<uint32_t>::operator[](size_t pos) {
     assert (pos < len);
 
     if (is_small()) {
@@ -52,8 +52,8 @@ T &opt_vector<T>::operator[](size_t pos) {
     return big_data->operator[](pos);
 }
 
-template <typename T>
-T opt_vector<T>::back() const {
+template <>
+uint32_t opt_vector<uint32_t>::back() const {
     assert (len > 0);
 
     if (is_small()) {
@@ -62,11 +62,11 @@ T opt_vector<T>::back() const {
     return big_data->back();
 }
 
-template <typename T>
-void opt_vector<T>::resize(size_t new_len) {
+template <>
+void opt_vector<uint32_t>::resize(size_t new_len) {
     if (is_small()) {
         if (new_len > 1) {
-            big_data = std::make_shared<std::vector<T>>(new_len);
+            big_data = std::make_shared<std::vector<uint32_t>>(new_len);
             big_data->at(0) = small_data;
         }
     } else {
@@ -84,14 +84,14 @@ void opt_vector<T>::resize(size_t new_len) {
     len = new_len;
 }
 
-template <typename T>
-void opt_vector<T>::push_back(T new_val) {
+template <>
+void opt_vector<uint32_t>::push_back(uint32_t new_val) {
     switch (len++) {
         case 0:
             small_data = new_val;
             break;
         case 1:
-            big_data = std::make_shared<std::vector<T>>(2);
+            big_data = std::make_shared<std::vector<uint32_t>>(2);
             big_data->at(0) = small_data;
             big_data->at(1) = new_val;
             break;
@@ -102,8 +102,8 @@ void opt_vector<T>::push_back(T new_val) {
     }
 }
 
-template <typename T>
-void opt_vector<T>::pop_back() {
+template <>
+void opt_vector<uint32_t>::pop_back() {
     assert (len > 1);
 
     switch (len--) {
@@ -121,8 +121,8 @@ void opt_vector<T>::pop_back() {
     }
 }
 
-template <typename T>
-bool opt_vector<T>::operator==(opt_vector const& other) const {
+template <>
+bool opt_vector<uint32_t>::operator==(opt_vector const& other) const {
     if (this->len != other.len) {
         return false;
     }
@@ -130,16 +130,4 @@ bool opt_vector<T>::operator==(opt_vector const& other) const {
         return this->small_data == other.small_data;
     }
     return *this->big_data == *other.big_data;
-}
-
-template <typename T>
-bool opt_vector<T>::is_small() const {
-    return len <= 1;
-}
-
-template <typename T>
-void opt_vector<T>::make_unique() {
-    if (!big_data.unique()) {
-        big_data = std::make_shared<std::vector<T>>(*big_data);
-    }
 }
